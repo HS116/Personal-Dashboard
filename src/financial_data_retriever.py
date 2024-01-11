@@ -69,9 +69,22 @@ def get_news(country: str ="us", category: str = "general") -> List[str]:
         logging.error("Could not retrieve news information successfully")
         sys.exit(1)
 
+def get_crypto_exchange_data() -> List[Dict[str, Any]]:
+
+    """
+    :return: List of dictionaries containing crypto exchange data
+    """
+
+    url = 'https://api.coincap.io/v2/exchanges'
+    try:
+        response = requests.get(url)
+    except requests.ConnectionError as ce:
+        logging.error(f"There was an error with the request, {ce}")
+        sys.exit(1)
+    return response.json().get('data', [])
+
 
 if __name__=="__main__":
     print(get_stock__data("AAPL"))
     print(get_news("in"))
-
-
+    print(get_crypto_exchange_data())
