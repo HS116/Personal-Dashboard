@@ -1,1 +1,2 @@
+newsapi_python==0.2.7
 Requests==2.31.0
