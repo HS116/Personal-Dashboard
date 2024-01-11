@@ -8,6 +8,9 @@ from util.config import config
 
 import json
 
+from newsapi import NewsApiClient
+
+
 def get_stock__data(symbol : str) -> Dict[str, Any]:
     """
     :param symbol: The company or index you would like to get information from AlphaAvantage API e.g. TSLA
@@ -38,7 +41,37 @@ def get_stock__data(symbol : str) -> Dict[str, Any]:
     else:
         logging.error(f"Response had the following status code: {response.status_code}")
 
+
+def get_news(country: str ="us", category: str = "general") -> List[str]:
+
+    """
+    :param country: The country you would like to receive news information about. Default is US. India and US seem to get good data, but hardly any data for Germany and not so good data for uk. 
+    :param category: The category of news that you would be interested in
+
+    :return: List of strings containing the relevant news headlines. 
+
+    For more info about NewsAPI documentation: https://newsapi.org/docs and https://newsapi.org/docs/endpoints/top-headlines 
+    """
+
+    newsapi = NewsApiClient(api_key=config["NewsAPI_api_key"])
+    
+    try:
+        response = newsapi.get_top_headlines(country=country,category=category)
+    except ValueError as ve:
+        logging.error(f"Request failed due to {ve}")
+        sys.exit(1)
+    
+
+    if response["status"] == "ok":
+        titles = [article['title'] for article in response['articles']]
+        return titles
+    else:
+        logging.error("Could not retrieve news information successfully")
+        sys.exit(1)
+
+
 if __name__=="__main__":
     print(get_stock__data("AAPL"))
+    print(get_news("in"))
 
 
