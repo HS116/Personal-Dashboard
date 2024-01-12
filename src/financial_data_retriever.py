@@ -55,7 +55,9 @@ def get_stock__data(symbol : str) -> List[Dict[str, Any]]:
             formatted_price_data = []
 
             for date, attributes in price_data.items():
-                attributes = {column_renamings[key] : value for key, value in attributes.items()}
+                attributes = {column_renamings[key] : float(value) for key, value in attributes.items()}
+                attributes["volume"] = int(attributes["volume"])
+
                 attributes.update({"date" : date, "symbol" : symbol})
                 formatted_price_data.append(attributes)          
 
@@ -69,13 +71,13 @@ def get_stock__data(symbol : str) -> List[Dict[str, Any]]:
         logging.error(f"Response had the following status code: {response.status_code}")
 
 
-def get_news(country: str ="us", category: str = "general") -> List[str]:
+def get_news(country: str ="us", category: str = "general") -> List[Dict[str, Any]]:
 
     """
     :param country: The country you would like to receive news information about. Default is US. India and US seem to get good data, but hardly any data for Germany and not so good data for uk. 
     :param category: The category of news that you would be interested in
 
-    :return: List of strings containing the relevant news headlines. 
+    :return: List of dictionaries containing the relevant news articles
 
     For more info about NewsAPI documentation: https://newsapi.org/docs and https://newsapi.org/docs/endpoints/top-headlines 
     """
@@ -95,8 +97,27 @@ def get_news(country: str ="us", category: str = "general") -> List[str]:
     
 
     if response["status"] == "ok":
-        titles = [article['title'] for article in response['articles']]
-        return titles
+
+        articles = response['articles']
+
+        formatted_articles = []
+
+        for article in articles:
+
+            # Transformations
+
+            column_renamings={"publishedAt":"published_date"}
+            
+            article = {column_renamings.get(key, key) : value for key, value in article.items()}
+
+            formatted_article = {key : value for key, value in article.items() if key != 'source' and key != 'content' and key != 'urlToImage'}
+
+            formatted_article.update({"source_name" : article["source"]["name"]})
+
+            formatted_articles.append(formatted_article)
+
+        return formatted_articles
+        
     else:
         logging.error("Could not retrieve news information successfully")
         sys.exit(1)
