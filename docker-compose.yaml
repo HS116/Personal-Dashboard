@@ -18,3 +18,4 @@ services:
       - /home/neil/Personal-Dashboard/data_pgadmin:/var/lib/pgadmin
     ports:
       - "8080:80"
+      
