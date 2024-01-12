@@ -1,2 +1,4 @@
 newsapi_python==0.2.7
 Requests==2.31.0
+SQLAlchemy==2.0.25
+psycopg2-binary==2.9.9
