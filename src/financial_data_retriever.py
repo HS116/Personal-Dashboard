@@ -4,11 +4,12 @@ import sys
 from typing import Any, Dict, List, Optional
 
 import requests
-from util.config import config
 
 import json
 
 from newsapi import NewsApiClient
+
+import configparser
 
 
 def get_stock__data(symbol : str) -> Dict[str, Any]:
@@ -19,7 +20,12 @@ def get_stock__data(symbol : str) -> Dict[str, Any]:
     For more info about AlphaVantage API documentation: https://www.alphavantage.co/documentation/
     """
 
-    url= f"https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol={symbol}&interval=60min&apikey={config['AlphaAvantage_api_key']}"
+    config = configparser.ConfigParser()
+    config.read("configs/api_keys.ini")
+
+    api_key = config.get("api_keys", "AlphaAvantage_api_key")
+
+    url= f"https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol={symbol}&interval=60min&apikey={api_key}"
 
     try:
         response = requests.get(url)
@@ -53,7 +59,12 @@ def get_news(country: str ="us", category: str = "general") -> List[str]:
     For more info about NewsAPI documentation: https://newsapi.org/docs and https://newsapi.org/docs/endpoints/top-headlines 
     """
 
-    newsapi = NewsApiClient(api_key=config["NewsAPI_api_key"])
+    config = configparser.ConfigParser()
+    config.read("configs/api_keys.ini")
+
+    api_key = config.get("api_keys", "NewsAPI_api_key")
+
+    newsapi = NewsApiClient(api_key=api_key)
     
     try:
         response = newsapi.get_top_headlines(country=country,category=category)
@@ -87,4 +98,4 @@ def get_crypto_exchange_data() -> List[Dict[str, Any]]:
 if __name__=="__main__":
     print(get_stock__data("AAPL"))
     print(get_news("in"))
-    print(get_crypto_exchange_data())
+    #print(get_crypto_exchange_data())
