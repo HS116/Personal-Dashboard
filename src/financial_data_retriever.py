@@ -5,6 +5,9 @@ from typing import Any, Dict, List, Optional
 
 import requests
 
+from datetime import datetime
+
+
 import json
 
 from newsapi import NewsApiClient
@@ -12,10 +15,10 @@ from newsapi import NewsApiClient
 import configparser
 
 
-def get_stock__data(symbol : str) -> Dict[str, Any]:
+def get_stock__data(symbol : str) -> List[Dict[str, Any]]:
     """
     :param symbol: The company or index you would like to get information from AlphaAvantage API e.g. TSLA
-    :return: dictionary containing the stock info for that particular symbol e.g. IBM
+    :return: List of dictionaries where each dictionary contains stock data information for the symbol at a particular time point
 
     For more info about AlphaVantage API documentation: https://www.alphavantage.co/documentation/
     """
@@ -38,7 +41,25 @@ def get_stock__data(symbol : str) -> Dict[str, Any]:
 
         try:
             price_data = data['Time Series (60min)']
-            return price_data
+            
+            # Transformations
+            price_data = {datetime.strptime(date, "%Y-%m-%d %H:%M:%S") : attributes for date, attributes in price_data.items()}
+
+            column_renamings={
+                    '1. open':'open',
+                    '2. high':'high',
+                    '3. low':'low',
+                    '4. close':'close',
+                    '5. volume':'volume'}
+            
+            formatted_price_data = []
+
+            for date, attributes in price_data.items():
+                attributes = {column_renamings[key] : value for key, value in attributes.items()}
+                attributes.update({"date" : date, "symbol" : symbol})
+                formatted_price_data.append(attributes)          
+
+            return formatted_price_data
 
         except KeyError:
             logging.error("Time Series (60min) field is not present in content")
