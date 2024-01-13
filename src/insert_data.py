@@ -9,7 +9,7 @@ from engine import Engine
 
 from typing import List, Dict, Any
 
-from financial_data_retriever import get_stock__data, get_news
+from get_data import get_stock__data, get_fake_stock_data, get_newsdataio_news, get_exchange_rates, get_weather_data
 
 # Define the ORM model
 Base = declarative_base()
@@ -19,7 +19,7 @@ class StockData(Base):
     __tablename__ = "StockData"
     id : int = Column(Integer, primary_key=True, autoincrement=True)
     symbol : str = Column(String)
-    date : datetime = Column(DateTime)
+    datetime : datetime = Column(DateTime)
     open : float = Column(Float)
     high : float = Column(Float)
     low : float = Column(Float)
@@ -36,6 +36,28 @@ class NewsData(Base):
     author : str = Column(String)
     url : str = Column(String)
     published_date : datetime = Column(DateTime)
+
+@dataclass
+class ExchangeRateData(Base):
+    __tablename__ = "ExchangeRateData"
+    id : int = Column(Integer, primary_key=True, autoincrement=True)
+    first_currency : str = Column(String)
+    second_currency : str = Column(String)
+    exchange_rate : float = Column(Float)
+    datetime : datetime = Column(DateTime)
+
+@dataclass
+class WeatherData(Base):
+    __tablename__ = "WeatherData"
+    id : int = Column(Integer, primary_key=True, autoincrement=True)
+    city : str = Column(String)
+    country : str = Column(String)
+    condition : str  = Column(String)
+    temp_celsius : float = Column(Float)
+    temp_feels_like_celsius : float = Column(Float)
+    wind_kph : float = Column(Float)
+    humidity : float = Column(Float)
+    datetime : datetime = Column(DateTime)
 
 def buildEngine() -> Engine:
 
@@ -72,7 +94,7 @@ def insert_stock_data(engine: Engine, stock_data: List[Dict[str, Any]]):
             # TODO: Query the data to be avoid adding a duplicate
 
             session.add(StockData(symbol=stock_data_point["symbol"], 
-                                       date=stock_data_point["date"], 
+                                       datetime=stock_data_point["datetime"], 
                                        open=stock_data_point["open"], 
                                        high=stock_data_point["high"], 
                                        low=stock_data_point["close"], 
@@ -98,6 +120,46 @@ def insert_news_articles(engine: Engine, news_data: List[Dict[str, Any]]):
                                        author=news_article["author"], 
                                        url=news_article["url"], 
                                        published_date=news_article["published_date"]))
+            
+def insert_exchange_rates(engine: Engine, exchange_rates: List[Dict[str, Any]]):
+
+    # Create a session
+    # https://docs.sqlalchemy.org/en/20/orm/session_basics.html#using-a-sessionmaker
+
+    Session = sessionmaker(bind=engine.db_engine)
+
+    # Using a context manager to automatically take care of begin(), commit(), and rollback()
+    with Session.begin() as session:
+        for exchange_rate in exchange_rates:
+
+            # TODO: Query the data to be avoid adding a duplicate
+
+            session.add(ExchangeRateData(first_currency=exchange_rate["first_currency"],
+                                     second_currency=exchange_rate["second_currency"], 
+                                     exchange_rate=exchange_rate["exchange_rate"],
+                                     datetime=exchange_rate["datetime"]))
+
+            
+def insert_weather_data(engine: Engine, weather_data: Dict[str, Any]):
+
+    # Create a session
+    # https://docs.sqlalchemy.org/en/20/orm/session_basics.html#using-a-sessionmaker
+
+    Session = sessionmaker(bind=engine.db_engine)
+
+    # Using a context manager to automatically take care of begin(), commit(), and rollback()
+    with Session.begin() as session:
+
+        # TODO: Query the data to be avoid adding a duplicate
+
+        session.add(WeatherData(city=weather_data["city"],
+                    country=weather_data["country"],
+                    condition=weather_data["condition"],
+                    temp_celsius=weather_data["temp_celsius"],
+                    temp_feels_like_celsius=weather_data["temp_feels_like_celsius"],
+                    wind_kph=weather_data["wind_kph"],
+                    humidity=weather_data["humidity"],
+                    datetime=weather_data["datetime"]))
 
 
 if __name__=="__main__":
@@ -105,8 +167,12 @@ if __name__=="__main__":
     engine: Engine = buildEngine()
     create_tables(engine)
 
-    insert_stock_data(engine, get_stock__data("AAPL"))
-    insert_news_articles(engine, get_news("in"))
+    # REMEM to mock the scraped data for the stocks when just testing the db, since we have a limit of 25 api requests per day
+    insert_stock_data(engine, get_stock__data("ALV"))
+    #insert_stock_data(engine, get_fake_stock_data())
+    insert_news_articles(engine, get_newsdataio_news("de"))
+    insert_exchange_rates(engine, get_exchange_rates(["USD", "EUR", "GBP", "INR"]))
+    insert_weather_data(engine, get_weather_data("Munich"))
 
     Session = sessionmaker(bind=engine.db_engine)
 
@@ -121,10 +187,17 @@ if __name__=="__main__":
         for row in rows:
             print(row)
             print("\n")
+
+        rows = session.query(ExchangeRateData).all()
+        for row in rows:
+            print(row)
+            print("\n")
+
+        rows = session.query(WeatherData).all()
+        for row in rows:
+            print(row)
+            print("\n")
     
-
-
-
 
     """
     # Read

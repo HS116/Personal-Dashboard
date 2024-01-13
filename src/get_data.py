@@ -58,7 +58,7 @@ def get_stock__data(symbol : str) -> List[Dict[str, Any]]:
                 attributes = {column_renamings[key] : float(value) for key, value in attributes.items()}
                 attributes["volume"] = int(attributes["volume"])
 
-                attributes.update({"date" : date, "symbol" : symbol})
+                attributes.update({"datetime" : date, "symbol" : symbol})
                 formatted_price_data.append(attributes)          
 
             return formatted_price_data
@@ -179,7 +179,7 @@ def get_newsdataio_news(country: str ="de", category: str = "top") -> List[Dict[
             for article in articles:
                 article = {column_renamings.get(key, key) : value for key, value in article.items()}
 
-                article['published_data'] = datetime.strptime(article['published_data'], "%Y-%m-%d %H:%M:%S")
+                article['published_date'] = datetime.strptime(article['published_date'], "%Y-%m-%d %H:%M:%S")
 
                 formatted_article = {key : value for key, value in article.items() if key in relevant_columns}
                 formatted_articles.append(formatted_article)
@@ -243,7 +243,7 @@ def get_exchange_rates(currencies : List[str] = ["USD", "EUR", "GBP", "INR"]) ->
 
                 for second_currency, value in conversion_rates.items():
                     if first_currency != second_currency and second_currency in currencies:
-                        exchange_rates.append({"first_currency":first_currency, "second_currency":second_currency, "exchange_rate":float(value), "date": datetime.strptime(data['time_last_update_utc'], "%a, %d %b %Y %H:%M:%S %z")})
+                        exchange_rates.append({"first_currency":first_currency, "second_currency":second_currency, "exchange_rate":float(value), "datetime": datetime.strptime(data['time_last_update_utc'], "%a, %d %b %Y %H:%M:%S %z")})
             
             except KeyError:
                 logging.error("No 'conversion_rates' field")
