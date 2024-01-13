@@ -18,4 +18,7 @@ services:
       - /home/neil/Personal-Dashboard/data_pgadmin:/var/lib/pgadmin
     ports:
       - "8080:80"
-      
+  pythonapp:
+    build: ./
+    # TODO: Use "command: crond -f" once you have cron set up
+    command: python3 ./main.py
