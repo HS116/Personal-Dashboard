@@ -103,12 +103,9 @@ def insert_stock_data(engine: Engine, stock_data: List[Dict[str, Any]]):
             
 def insert_news_articles(engine: Engine, news_data: List[Dict[str, Any]]):
 
-    # Create a session
-    # https://docs.sqlalchemy.org/en/20/orm/session_basics.html#using-a-sessionmaker
 
     Session = sessionmaker(bind=engine.db_engine)
 
-    # Using a context manager to automatically take care of begin(), commit(), and rollback()
     with Session.begin() as session:
         for news_article in news_data:
 
@@ -123,12 +120,8 @@ def insert_news_articles(engine: Engine, news_data: List[Dict[str, Any]]):
             
 def insert_exchange_rates(engine: Engine, exchange_rates: List[Dict[str, Any]]):
 
-    # Create a session
-    # https://docs.sqlalchemy.org/en/20/orm/session_basics.html#using-a-sessionmaker
-
     Session = sessionmaker(bind=engine.db_engine)
 
-    # Using a context manager to automatically take care of begin(), commit(), and rollback()
     with Session.begin() as session:
         for exchange_rate in exchange_rates:
 
@@ -142,12 +135,8 @@ def insert_exchange_rates(engine: Engine, exchange_rates: List[Dict[str, Any]]):
             
 def insert_weather_data(engine: Engine, weather_data: Dict[str, Any]):
 
-    # Create a session
-    # https://docs.sqlalchemy.org/en/20/orm/session_basics.html#using-a-sessionmaker
-
     Session = sessionmaker(bind=engine.db_engine)
 
-    # Using a context manager to automatically take care of begin(), commit(), and rollback()
     with Session.begin() as session:
 
         # TODO: Query the data to be avoid adding a duplicate
