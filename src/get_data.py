@@ -182,6 +182,7 @@ def get_newsdataio_news(country: str ="de", category: str = "top") -> List[Dict[
                 article['published_date'] = datetime.strptime(article['published_date'], "%Y-%m-%d %H:%M:%S")
 
                 formatted_article = {key : value for key, value in article.items() if key in relevant_columns}
+                formatted_article['country'] = country
                 formatted_articles.append(formatted_article)
             
             return formatted_articles
@@ -307,3 +308,5 @@ if __name__=="__main__":
     #print(get_crypto_exchange_data())
     #print(get_exchange_rates())
     print(get_weather_data("Chennai"))
+
+    # TODO: Maybe use finnhub API for getting stock info instead of AlphaVantage since it offers real time and has a high limit of 30 API calls per second instead of 25 API calls per day with Alpha Vantage
