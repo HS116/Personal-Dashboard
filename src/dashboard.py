@@ -8,7 +8,11 @@ import pandas as pd
 import numpy as np 
 import requests
 
-app = Dash(external_stylesheets=[dbc.themes.SLATE])
+from insert_data import buildEngine, NewsData
+from sqlalchemy.orm import sessionmaker
+from engine import Engine
+
+app = Dash(external_stylesheets=[dbc.themes.SLATE], suppress_callback_exceptions=True)
 
 app.layout = html.Div([
 
@@ -40,13 +44,13 @@ def render_content(tab):
             html.H3("News", style={'text-align': 'center'}), 
 
             html.Div([
-            dcc.Dropdown(["Germany", "United Kingdom", "United States", "India"], id="select-country1-news", value="Germany", style={"width":"200px"}), 
-            dcc.Dropdown(["Germany", "United Kingdom", "United States", "India"], id="select-country2-news", value="United Kingdom", style={"width":"200px"})
+            dcc.Dropdown(["Germany", "Great Britain", "United States", "India"], id="select-country1-news", value="Germany", style={"width":"200px"}), 
+            dcc.Dropdown(["Germany", "Great Britain", "United States", "India"], id="select-country2-news", value="Great Britain", style={"width":"200px"})
             ], style={"display" : "flex", "margin" : "auto", "width" : "1800px", "justify-content" : "space-around"}),
 
             html.Div([
-            dbc.Card("Something", id="country1-news", color="secondary", inverse=True, style={'height': '100vh', 'padding':'20px', 'flex': '1', 'margin-right': '10px'}), 
-            dbc.Card("Something", id="country2-news", color="secondary", inverse=True, style={'height': '100vh', 'padding':'20px', 'flex': '1', 'margin-left': '10px'})
+            dbc.Card("Something", id="country1-news", color="secondary", inverse=True, style={'height': '100vh', 'padding':'20px', 'flex': '1', 'margin-right': '10px', 'overflow':'auto'}), 
+            dbc.Card("Something", id="country2-news", color="secondary", inverse=True, style={'height': '100vh', 'padding':'20px', 'flex': '1', 'margin-left': '10px', 'overflow':'auto'})
             ], style={"display": "flex", "justify-content": "space-around", "width": "100%", "padding":"20px"})
 
         ], style={'padding':'20px'})
@@ -62,6 +66,55 @@ def render_content(tab):
             html.H3("Exchange Rates", style={'text-align': 'center'}), 
             dbc.Card("Something", color="secondary", inverse=True, style={'height': '100vh', 'padding':'20px'})
         ], style={'padding':'20px'})
+    
+
+@app.callback(Output("country1-news", "children"),
+              Input("select-country1-news", "value"))
+def render_news_country1(selected_country):
+
+    engine: Engine = buildEngine()
+
+    Session = sessionmaker(bind=engine.db_engine)
+
+    with Session.begin() as session:
+
+        content = []
+        
+        articles = session.query(NewsData).filter(NewsData.country == selected_country)
+        for article in articles:
+            content.append(html.Div([
+                html.Div([
+                    html.H3([article.title], style={"font-size":"20px"}), 
+                    html.P([article.description]), 
+                    html.P([article.url]), 
+                ])
+            ]))
+
+        return content
+            
+@app.callback(Output("country2-news", "children"),
+              Input("select-country2-news", "value"))
+def render_news_country1(selected_country):
+
+    engine: Engine = buildEngine()
+
+    Session = sessionmaker(bind=engine.db_engine)
+
+    with Session.begin() as session:
+
+        content = []
+        
+        articles = session.query(NewsData).filter(NewsData.country == selected_country)
+        for article in articles:
+            content.append(html.Div([
+                html.Div([
+                    html.H3([article.title], style={"font-size":"20px"}), 
+                    html.P([article.description]), 
+                    html.P([article.url]), 
+                ])
+            ]))
+
+        return content
         
 
 if __name__ == "__main__":
