@@ -14,13 +14,72 @@ from newsapi import NewsApiClient
 
 import configparser
 
+def get_stock_data_market_stack(symbol : str = "AAPL") -> List[Dict[str, Any]]:
 
-def get_stock__data(symbol : str) -> List[Dict[str, Any]]:
     """
     :param symbol: The company or index you would like to get information from AlphaAvantage API e.g. TSLA
     :return: List of dictionaries where each dictionary contains stock data information for the symbol at a particular time point
 
-    For more info about AlphaVantage API documentation: https://www.alphavantage.co/documentation/
+    For more info about MarketData API: https://marketstack.com/documentation
+    Max of 1000 monthly API calls per month on free version. 
+    """
+
+    config = configparser.ConfigParser()
+    config.read("configs/api_keys.ini")
+
+    api_key = config.get("api_keys", "Marketstack_api_key")
+
+    # TODO: change "eod" to "eod/latest" so we can inserting duplicate data later
+    url=f"http://api.marketstack.com/v1/eod?access_key={api_key}&symbols={symbol}"
+
+    try:
+        response = requests.get(url)
+    except requests.ConnectionError as ce:
+        logging.error(f"There was an error with the request: {ce}")
+        sys.exit(1)
+
+    if response.status_code == 200:
+        content = json.loads(response.content)
+
+        try:
+            stock_data = content["data"]
+
+            # Transformation
+
+            formatted_stock_data = []
+
+            relevant_columns = {"symbol", "datetime", "open", "high", "low", "close", "volume"}
+
+            for stock_data_point in stock_data:
+
+                stock_data_point['datetime'] = datetime.strptime(stock_data_point['date'], "%Y-%m-%dT%H:%M:%S%z")
+
+                if stock_data_point["volume"]:
+                    stock_data_point["volume"] = int(stock_data_point["volume"])
+                else:
+                    stock_data_point["volume"] = None
+
+                formatted_stock_data_point = {key : value for key, value in stock_data_point.items() if key in relevant_columns}
+
+                formatted_stock_data.append(formatted_stock_data_point)         
+
+            return formatted_stock_data
+
+        except KeyError:
+            logging.error("'data' field is not present in content")
+            sys.exit(1)
+
+    else:
+        logging.error(f"Response had the following status code: {response.status_code}")
+        sys.exit(1)
+
+
+def get_stock_data_alpha_vantage(symbol : str) -> List[Dict[str, Any]]:
+    """
+    :param symbol: The company or index you would like to get information from AlphaAvantage API e.g. TSLA
+    :return: List of dictionaries where each dictionary contains stock data information for the symbol at a particular time point
+
+    For more info about AlphaVantage API: https://www.alphavantage.co/documentation/
     """
 
     config = configparser.ConfigParser()
@@ -43,6 +102,8 @@ def get_stock__data(symbol : str) -> List[Dict[str, Any]]:
             price_data = data['Time Series (60min)']
             
             # Transformations
+            # TODO: Move the transform functionality into a separate function
+
             price_data = {datetime.strptime(date, "%Y-%m-%d %H:%M:%S") : attributes for date, attributes in price_data.items()}
 
             column_renamings={
@@ -80,7 +141,8 @@ def get_fake_stock_data():
 
     # TODO: Make this method better by using mocking or storing the data in a file
 
-    res = [{'open': 185.675, 'high': 185.7, 'low': 185.56, 'close': 185.63, 'volume': 25944, 'date': datetime(2024, 1, 12, 19, 0), 'symbol': 'AAPL'}, {'open': 185.8, 'high': 185.81, 'low': 185.65, 'close': 185.67, 'volume': 9115, 'date': datetime(2024, 1, 12, 18, 0), 'symbol': 'AAPL'}, {'open': 185.83, 'high': 185.92, 'low': 175.279, 'close': 185.8, 'volume': 216241, 'date': datetime(2024, 1, 12, 17, 0), 'symbol': 'AAPL'}, {'open': 185.91, 'high': 185.99, 'low': 185.45, 'close': 185.835, 'volume': 16247450, 'date': datetime(2024, 1, 12, 16, 0), 'symbol': 'AAPL'}, {'open': 185.31, 'high': 185.98, 'low': 185.22, 'close': 185.92, 'volume': 6578518, 'date': datetime(2024, 1, 12, 15, 0), 'symbol': 'AAPL'}]
+    res = [{'open': 185.675, 'high': 185.7, 'low': 185.56, 'close': 185.63, 'volume': 25944, 'date': datetime(2024, 1, 12, 19, 0), 'symbol': 'AAPL'}, {'open': 185.8, 'high': 185.81, 'low': 185.65, 'close': 185.67, 'volume': 9115, 'date': datetime(2024, 1, 12, 18, 0), 'symbol': 'AAPL'}, {'open': 185.83, 'high': 185.92, 'low': 175.279, 'close': 185.8, 'volume': 216241, 'date': datetime(2024, 1, 12, 17, 0), 'symbol': 'AAPL'}, {'open': 185.91, 'high': 185.99, 'low': 185.45, 'close': 185.835, 'volume': 16247450, 'date': datetime(2024, 1, 12, 16, 0), 'symbol': 'AAPL'}, {'open': 185.31, 'high': 185.98, 'low': 185.22, 'close': 185.92, 'volume': 6578518, 'date': datetime(2024, 1, 12, 15, 0), 'symbol': 'AAPL'}, 
+           ]
 
     return res
 
@@ -301,12 +363,14 @@ def get_weather_data(city : str = "Munich") -> Dict[str, Any]:
         sys.exit(1)
 
 if __name__=="__main__":
-    #print(get_stock__data("AAPL"))
-    #print(get_newsapi_news("in"))
-    print("\n\n")
-    #print(get_newsdataio_news())
-    #print(get_crypto_exchange_data())
-    #print(get_exchange_rates())
-    print(get_weather_data("Chennai"))
+    # print(get_stock__data("AAPL"))
+    # print(get_newsapi_news("in"))
+    # print("\n\n")
+    # print(get_newsdataio_news())
+    # print(get_crypto_exchange_data())
+    # print(get_exchange_rates())
+    # print(get_weather_data("Chennai"))
+
+    print(get_stock_data_market_stack())
 
     # TODO: Maybe use finnhub API for getting stock info instead of AlphaVantage since it offers real time and has a high limit of 30 API calls per second instead of 25 API calls per day with Alpha Vantage
