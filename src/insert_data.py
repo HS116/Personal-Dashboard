@@ -36,6 +36,7 @@ class NewsData(Base):
     author : str = Column(String)
     url : str = Column(String)
     published_date : datetime = Column(DateTime)
+    country : str = Column(String)
 
 @dataclass
 class ExchangeRateData(Base):
@@ -106,17 +107,21 @@ def insert_news_articles(engine: Engine, news_data: List[Dict[str, Any]]):
 
     Session = sessionmaker(bind=engine.db_engine)
 
+    country_code_mappings = {"de": "Germany", "gb" : "Great Britain", "us" : "United States", "in":"India"}
+
     with Session.begin() as session:
         for news_article in news_data:
 
             # TODO: Query the data to be avoid adding a duplicate
+            
 
             session.add(NewsData(title=news_article["title"], 
                                        description=news_article["description"], 
                                        source_name=news_article["source_name"], 
                                        author=news_article["author"], 
                                        url=news_article["url"], 
-                                       published_date=news_article["published_date"]))
+                                       published_date=news_article["published_date"],
+                                       country= country_code_mappings[news_article["country"]]))
             
 def insert_exchange_rates(engine: Engine, exchange_rates: List[Dict[str, Any]]):
 
@@ -157,35 +162,38 @@ if __name__=="__main__":
     create_tables(engine)
 
     # REMEM to mock the scraped data for the stocks when just testing the db, since we have a limit of 25 api requests per day
-    insert_stock_data(engine, get_stock__data("ALV"))
+    # insert_stock_data(engine, get_stock__data("ALV"))
     #insert_stock_data(engine, get_fake_stock_data())
     insert_news_articles(engine, get_newsdataio_news("de"))
-    insert_exchange_rates(engine, get_exchange_rates(["USD", "EUR", "GBP", "INR"]))
-    insert_weather_data(engine, get_weather_data("Munich"))
+    insert_news_articles(engine, get_newsdataio_news("gb"))
+    insert_news_articles(engine, get_newsdataio_news("us"))
+    insert_news_articles(engine, get_newsdataio_news("in"))
+    # insert_exchange_rates(engine, get_exchange_rates(["USD", "EUR", "GBP", "INR"]))
+    # insert_weather_data(engine, get_weather_data("Munich"))
 
     Session = sessionmaker(bind=engine.db_engine)
 
     with Session.begin() as session:
         
-        rows = session.query(StockData).all()
-        for row in rows:
-            print(row)
-            print("\n")
+        # rows = session.query(StockData).all()
+        # for row in rows:
+        #     print(row)
+        #     print("\n")
 
         rows = session.query(NewsData).all()
         for row in rows:
             print(row)
             print("\n")
 
-        rows = session.query(ExchangeRateData).all()
-        for row in rows:
-            print(row)
-            print("\n")
+        # rows = session.query(ExchangeRateData).all()
+        # for row in rows:
+        #     print(row)
+        #     print("\n")
 
-        rows = session.query(WeatherData).all()
-        for row in rows:
-            print(row)
-            print("\n")
+        # rows = session.query(WeatherData).all()
+        # for row in rows:
+        #     print(row)
+        #     print("\n")
     
 
     """
