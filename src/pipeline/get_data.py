@@ -96,7 +96,10 @@ def get_stock_data_alpha_vantage(symbol : str) -> List[Dict[str, Any]]:
         sys.exit(1)
 
     if response.status_code == 200:
-        data = json.loads(response.content)
+        data = response.json()
+
+        print(data)
+        print("\n\n")
 
         try:
             price_data = data['Time Series (60min)']
@@ -363,7 +366,7 @@ def get_weather_data(city : str = "Munich") -> Dict[str, Any]:
         sys.exit(1)
 
 if __name__=="__main__":
-    # print(get_stock__data("AAPL"))
+    print(get_stock_data_alpha_vantage("AAPL"))
     # print(get_newsapi_news("in"))
     # print("\n\n")
     # print(get_newsdataio_news())
@@ -371,6 +374,6 @@ if __name__=="__main__":
     # print(get_exchange_rates())
     # print(get_weather_data("Chennai"))
 
-    print(get_stock_data_market_stack())
+    #print(get_stock_data_market_stack())
 
     # TODO: Maybe use finnhub API for getting stock info instead of AlphaVantage since it offers real time and has a high limit of 30 API calls per second instead of 25 API calls per day with Alpha Vantage

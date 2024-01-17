@@ -9,7 +9,7 @@ from engine import Engine
 
 from typing import List, Dict, Any
 
-from get_data import get_stock__data, get_fake_stock_data, get_newsdataio_news, get_exchange_rates, get_weather_data
+from get_data import get_stock_data_market_stack, get_stock_data_alpha_vantage, get_fake_stock_data, get_newsdataio_news, get_exchange_rates, get_weather_data
 
 # Define the ORM model
 Base = declarative_base()
@@ -162,12 +162,33 @@ if __name__=="__main__":
     create_tables(engine)
 
     # REMEM to mock the scraped data for the stocks when just testing the db, since we have a limit of 25 api requests per day
-    # insert_stock_data(engine, get_stock__data("ALV"))
+    insert_stock_data(engine, get_stock_data_market_stack("TCS.XNSE"))
+
+    """
+    Stocks I am interested in from US, Germany, and UK:
+    Allianz on german stock exchange: ALV.XFRA
+    BMW on german stock exchange: BMW.XFRA
+    Mercedes Benz group on german stock exchange: DAII.XFRA
+
+    Apple on Nasdaq: AAPL
+    Tesla on Nasdaq: TSLA
+    Coca-Cola on Nasdaq: KO
+
+    Tesco on London Stock Exchange: TSCO.XLON
+    Shell on London Stock Exchange: SHEL.XLON	
+    HSBC on London Stock Exchange: HSBA.XLON
+
+    Reliance Industries on National Stock Exhange India: RELIANCE.XNSE	
+    Infosys on National Stock Exchange India: INFY.XNSE
+    Tata Consultancy Services on National Stock Exchange India: TCS.XNSE
+    """
+
+
     #insert_stock_data(engine, get_fake_stock_data())
-    insert_news_articles(engine, get_newsdataio_news("de"))
-    insert_news_articles(engine, get_newsdataio_news("gb"))
-    insert_news_articles(engine, get_newsdataio_news("us"))
-    insert_news_articles(engine, get_newsdataio_news("in"))
+    # insert_news_articles(engine, get_newsdataio_news("de"))
+    # insert_news_articles(engine, get_newsdataio_news("gb"))
+    # insert_news_articles(engine, get_newsdataio_news("us"))
+    # insert_news_articles(engine, get_newsdataio_news("in"))
     # insert_exchange_rates(engine, get_exchange_rates(["USD", "EUR", "GBP", "INR"]))
     # insert_weather_data(engine, get_weather_data("Munich"))
 
@@ -175,15 +196,15 @@ if __name__=="__main__":
 
     with Session.begin() as session:
         
-        # rows = session.query(StockData).all()
-        # for row in rows:
-        #     print(row)
-        #     print("\n")
-
-        rows = session.query(NewsData).all()
+        rows = session.query(StockData).all()
         for row in rows:
             print(row)
             print("\n")
+
+        # rows = session.query(NewsData).all()
+        # for row in rows:
+        #     print(row)
+        #     print("\n")
 
         # rows = session.query(ExchangeRateData).all()
         # for row in rows:
