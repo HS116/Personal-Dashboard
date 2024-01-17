@@ -260,7 +260,7 @@ def get_newsdataio_news(country: str = "de", category: str = "top") -> List[Dict
 
     api_key = config.get("api_keys", "NewsDataIO_api_key")
 
-    url = f"https://newsdata.io/api/1/news?apikey={api_key}&country={country}&prioritydomain=top&timeframe=24&category={category}"
+    url = f"https://newsdata.io/api/1/news?apikey={api_key}&country={country}&prioritydomain=top&category={category}"
 
     try:
         response = requests.get(url)
@@ -303,7 +303,7 @@ def get_newsdataio_news(country: str = "de", category: str = "top") -> List[Dict
             sys.exit(1)
 
     else:
-        logging.error(f"Response had the following status code: {response.status_code}")
+        logging.error(f"Response for {country} had the following status code: {response.status_code}")
         sys.exit(1)
 
 @timer_decorator
