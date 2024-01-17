@@ -120,7 +120,13 @@ def render_content(tab):
         )
 
 
-def create_stocks_graph(symbols: List[str]):
+def create_stocks_graph(selected_country : str):
+
+    with open('configs/my_stocks.json', 'r') as file:
+        my_stocks = json.load(file)
+
+    symbols = [stock['symbol'] for stock in my_stocks['stocks'][selected_country]]
+
     engine: Engine = buildEngine()
 
     # Convert table from database into datafram since plotly relies on dataframes
@@ -140,29 +146,13 @@ def create_stocks_graph(symbols: List[str]):
 @app.callback(Output("country1-stocks", "children"), Input("select-country1-stocks", "value"))
 def stocks1(selected_country):
 
-    engine: Engine = buildEngine()
-
-    Session = sessionmaker(bind=engine.db_engine)
-
-    with open('configs/my_stocks.json', 'r') as file:
-        my_stocks = json.load(file)
-
-    country_stock_symbols = [stock['symbol'] for stock in my_stocks['stocks'][selected_country]]
-    return create_stocks_graph(country_stock_symbols)
+    return create_stocks_graph(selected_country)
 
 
 @app.callback(Output("country2-stocks", "children"), Input("select-country2-stocks", "value"))
 def stocks2(selected_country):
 
-    engine: Engine = buildEngine()
-
-    Session = sessionmaker(bind=engine.db_engine)
-
-    with open('configs/my_stocks.json', 'r') as file:
-        my_stocks = json.load(file)
-
-    country_stock_symbols = [stock['symbol'] for stock in my_stocks['stocks'][selected_country]]
-    return create_stocks_graph(country_stock_symbols)
+    return create_stocks_graph(selected_country)
 
 
 @app.callback(Output("country1-news", "children"), Input("select-country1-news", "value"))
