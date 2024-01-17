@@ -132,7 +132,7 @@ def create_stocks_graph(symbols: List[str]):
 
     fig = px.line(df, x="datetime", y="close", color="symbol")
 
-    fig.update_layout(template="plotly_dark")
+    fig.update_layout(template="plotly_dark", xaxis_title='Date', yaxis_title='Closing Price')
 
     return dcc.Graph(figure=fig)
 
