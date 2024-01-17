@@ -20,8 +20,6 @@ def get_stock_data_market_stack(symbol: str = "AAPL") -> List[Dict[str, Any]]:
     Max of 1000 monthly API calls per month on free version.
     """
 
-    logging.getLogger().setLevel(logging.INFO)
-
     config = configparser.ConfigParser()
     config.read("configs/api_keys.ini")
 
@@ -430,6 +428,7 @@ if __name__ == "__main__":
     # print(get_exchange_rates())
     # print(get_weather_data("Chennai"))
 
+    logging.getLogger().setLevel(logging.INFO)
     print(get_stock_data_market_stack())
 
     # TODO: Maybe use finnhub API for getting stock info instead of AlphaVantage since it offers real time and has a high limit of 30 API calls per second instead of 25 API calls per day with Alpha Vantage
