@@ -8,8 +8,9 @@ from typing import Any, Dict, List, Optional
 
 import requests
 from newsapi import NewsApiClient
+from timer_decorator_wrapper import timer_decorator
 
-
+@timer_decorator
 def get_stock_data_market_stack(symbol: str = "AAPL") -> List[Dict[str, Any]]:
     """
     :param symbol: The company or index you would like to get information from AlphaAvantage API e.g. TSLA
@@ -18,6 +19,8 @@ def get_stock_data_market_stack(symbol: str = "AAPL") -> List[Dict[str, Any]]:
     For more info about MarketData API: https://marketstack.com/documentation
     Max of 1000 monthly API calls per month on free version.
     """
+
+    logging.getLogger().setLevel(logging.INFO)
 
     config = configparser.ConfigParser()
     config.read("configs/api_keys.ini")
@@ -69,7 +72,7 @@ def get_stock_data_market_stack(symbol: str = "AAPL") -> List[Dict[str, Any]]:
         logging.error(f"Response had the following status code: {response.status_code}")
         sys.exit(1)
 
-
+@timer_decorator
 def get_stock_data_alpha_vantage(symbol: str) -> List[Dict[str, Any]]:
     """
     :param symbol: The company or index you would like to get information from AlphaAvantage API e.g. TSLA
@@ -134,7 +137,7 @@ def get_stock_data_alpha_vantage(symbol: str) -> List[Dict[str, Any]]:
         logging.error(f"Response had the following status code: {response.status_code}")
         sys.exit(1)
 
-
+@timer_decorator
 def get_fake_stock_data():
     """
     For testing purposes to prevent unnecessary API requests since there is a limit of 25 API requests per day
@@ -192,7 +195,7 @@ def get_fake_stock_data():
 
     return res
 
-
+@timer_decorator
 def get_newsapi_news(country: str = "us", category: str = "general") -> List[Dict[str, Any]]:
     """
     :param country: The country you would like to receive news information about. Default is US. India and US seem to get good data, but hardly any data for Germany and not so good data for uk.
@@ -244,7 +247,7 @@ def get_newsapi_news(country: str = "us", category: str = "general") -> List[Dic
         logging.error("Could not retrieve news information successfully")
         sys.exit(1)
 
-
+@timer_decorator
 def get_newsdataio_news(country: str = "de", category: str = "top") -> List[Dict[str, Any]]:
     """
     :param country: The country you would like to receive news information about. Default is Germany. This API returns good results for UK (gb), Germany (de), United States (us), India (in)
@@ -306,7 +309,7 @@ def get_newsdataio_news(country: str = "de", category: str = "top") -> List[Dict
         logging.error(f"Response had the following status code: {response.status_code}")
         sys.exit(1)
 
-
+@timer_decorator
 def get_crypto_exchange_data() -> List[Dict[str, Any]]:
     """
     :return: List of dictionaries containing crypto exchange data
@@ -320,7 +323,7 @@ def get_crypto_exchange_data() -> List[Dict[str, Any]]:
         sys.exit(1)
     return response.json().get('data', [])
 
-
+@timer_decorator
 def get_exchange_rates(currencies: List[str] = ["USD", "EUR", "GBP", "INR"]) -> List[Dict[str, Any]]:
     """
     :param currencies: List of currencies which you want currency exchange info e.g. ["USD", "EUR", "GBP", "INR"]
@@ -372,7 +375,7 @@ def get_exchange_rates(currencies: List[str] = ["USD", "EUR", "GBP", "INR"]) -> 
 
     return exchange_rates
 
-
+@timer_decorator
 def get_weather_data(city: str = "Munich") -> Dict[str, Any]:
     """
     :param city: The city you would like to receive weather data for
@@ -419,7 +422,7 @@ def get_weather_data(city: str = "Munich") -> Dict[str, Any]:
 
 
 if __name__ == "__main__":
-    print(get_stock_data_alpha_vantage("AAPL"))
+    # print(get_stock_data_alpha_vantage("AAPL"))
     # print(get_newsapi_news("in"))
     # print("\n\n")
     # print(get_newsdataio_news())
@@ -427,6 +430,6 @@ if __name__ == "__main__":
     # print(get_exchange_rates())
     # print(get_weather_data("Chennai"))
 
-    # print(get_stock_data_market_stack())
+    print(get_stock_data_market_stack())
 
     # TODO: Maybe use finnhub API for getting stock info instead of AlphaVantage since it offers real time and has a high limit of 30 API calls per second instead of 25 API calls per day with Alpha Vantage
