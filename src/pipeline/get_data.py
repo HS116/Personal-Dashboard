@@ -10,7 +10,7 @@ import requests
 from newsapi import NewsApiClient
 
 
-def get_stock_data_market_stack(symbol: str = "AAPL") -> List[Dict[str, Any]]:
+def get_stock_data_market_stack(symbol:                                                         str = "AAPL") -> List[Dict[str, Any]]:
     """
     :param symbol: The company or index you would like to get information from AlphaAvantage API e.g. TSLA
     :return: List of dictionaries where each dictionary contains stock data information for the symbol at a particular time point
