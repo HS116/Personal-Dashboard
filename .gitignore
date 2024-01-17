@@ -1,3 +1,4 @@
 api_keys.ini
 database.ini
 configs/
+**/__pycache__
