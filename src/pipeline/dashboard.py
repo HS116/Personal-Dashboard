@@ -1,18 +1,15 @@
-from dash import Dash, dcc, html, Input, Output
-
-import dash_bootstrap_components as dbc 
-import plotly.express as px
-
-import plotly.graph_objects as go 
-import pandas as pd
-import numpy as np 
-import requests
-
 from typing import List
 
-from insert_data import buildEngine, NewsData
-from sqlalchemy.orm import sessionmaker
+import dash_bootstrap_components as dbc
+import numpy as np
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+import requests
+from dash import Dash, Input, Output, dcc, html
 from engine import Engine
+from insert_data import NewsData, buildEngine
+from sqlalchemy.orm import sessionmaker
 
 app = Dash(external_stylesheets=[dbc.themes.SLATE], suppress_callback_exceptions=True)
 

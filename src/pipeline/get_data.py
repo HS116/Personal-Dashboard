@@ -1,18 +1,14 @@
+import configparser
 import datetime
+import json
 import logging
 import sys
+from datetime import datetime
 from typing import Any, Dict, List, Optional
 
 import requests
-
-from datetime import datetime
-
-
-import json
-
 from newsapi import NewsApiClient
 
-import configparser
 
 def get_stock_data_market_stack(symbol : str = "AAPL") -> List[Dict[str, Any]]:
 

@@ -1,14 +1,14 @@
 # Using pytest helps to reduce boilerplate code compared to using purely unittest module, 
 # since now we just have to specify the "assert" keyword and don't need to do any inheritance
 
+import unittest
+from datetime import datetime
+from unittest.mock import Mock, patch
+
 import pytest
 import requests
-import unittest
-from unittest.mock import patch, Mock
 
 from pipeline.get_data import get_stock_data_alpha_vantage
-
-from datetime import datetime
 
 
 class TestTransformData(unittest.TestCase):

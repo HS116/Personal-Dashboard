@@ -1,15 +1,14 @@
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Float
-from sqlalchemy.orm import sessionmaker, declarative_base
 import configparser
-
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Any, Dict, List
 
 from engine import Engine
-
-from typing import List, Dict, Any
-
-from get_data import get_stock_data_market_stack, get_stock_data_alpha_vantage, get_fake_stock_data, get_newsdataio_news, get_exchange_rates, get_weather_data
+from get_data import (get_exchange_rates, get_fake_stock_data,
+                      get_newsdataio_news, get_stock_data_alpha_vantage,
+                      get_stock_data_market_stack, get_weather_data)
+from sqlalchemy import Column, DateTime, Float, Integer, String, create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 # Define the ORM model
 Base = declarative_base()
