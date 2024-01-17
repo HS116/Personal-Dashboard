@@ -7,5 +7,4 @@ test:
 sort-imports:
 		isort ./src
 
-ci:
-		sort-imports format test 
+ci: sort-imports format test 
