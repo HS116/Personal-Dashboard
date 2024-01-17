@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Any, Dict, List
 
 from engine import Engine
-from get_data import (
+from extract_data import (
     get_exchange_rates,
     get_fake_stock_data,
     get_newsdataio_news,

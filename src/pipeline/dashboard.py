@@ -8,8 +8,9 @@ import plotly.graph_objects as go
 import requests
 from dash import Dash, Input, Output, dcc, html
 from engine import Engine
-from insert_data import NewsData, buildEngine
+from load_data import NewsData, buildEngine
 from sqlalchemy.orm import sessionmaker
+import json
 
 app = Dash(external_stylesheets=[dbc.themes.SLATE], suppress_callback_exceptions=True)
 
@@ -138,40 +139,30 @@ def create_stocks_graph(symbols: List[str]):
 
 @app.callback(Output("country1-stocks", "children"), Input("select-country1-stocks", "value"))
 def stocks1(selected_country):
+
     engine: Engine = buildEngine()
 
     Session = sessionmaker(bind=engine.db_engine)
 
-    if selected_country == "Germany":
-        return create_stocks_graph(["ALV.XFRA", "BMW.XFRA", "DAII.XFRA"])
+    with open('configs/my_stocks.json', 'r') as file:
+        my_stocks = json.load(file)
 
-    elif selected_country == "Great Britain":
-        return create_stocks_graph(["TSCO.XLON", "SHEL.XLON", "HSBA.XLON"])
-
-    elif selected_country == "United States":
-        return create_stocks_graph(["AAPL", "TSLA", "KO"])
-
-    elif selected_country == "India":
-        return create_stocks_graph(["RELIANCE.XNSE", "INFY.XNSE", "TCS.XNSE"])
+    country_stock_symbols = [stock['symbol'] for stock in my_stocks['stocks'][selected_country]]
+    return create_stocks_graph(country_stock_symbols)
 
 
 @app.callback(Output("country2-stocks", "children"), Input("select-country2-stocks", "value"))
 def stocks2(selected_country):
+
     engine: Engine = buildEngine()
 
     Session = sessionmaker(bind=engine.db_engine)
 
-    if selected_country == "Germany":
-        return create_stocks_graph(["ALV.XFRA", "BMW.XFRA", "DAII.XFRA"])
+    with open('configs/my_stocks.json', 'r') as file:
+        my_stocks = json.load(file)
 
-    elif selected_country == "Great Britain":
-        return create_stocks_graph(["TSCO.XLON", "SHEL.XLON", "HSBA.XLON"])
-
-    elif selected_country == "United States":
-        return create_stocks_graph(["AAPL", "TSLA", "KO"])
-
-    elif selected_country == "India":
-        return create_stocks_graph(["RELIANCE.XNSE", "INFY.XNSE", "TCS.XNSE"])
+    country_stock_symbols = [stock['symbol'] for stock in my_stocks['stocks'][selected_country]]
+    return create_stocks_graph(country_stock_symbols)
 
 
 @app.callback(Output("country1-news", "children"), Input("select-country1-news", "value"))

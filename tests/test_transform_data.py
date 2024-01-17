@@ -8,7 +8,7 @@ from unittest.mock import Mock, patch
 import pytest
 import requests
 
-from pipeline.get_data import get_stock_data_alpha_vantage
+from pipeline.extract_data import get_stock_data_alpha_vantage
 
 
 class TestTransformData(unittest.TestCase):

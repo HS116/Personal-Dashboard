@@ -70,7 +70,6 @@ def get_stock_data_market_stack(symbol: str = "AAPL") -> List[Dict[str, Any]]:
         logging.error(f"Response had the following status code: {response.status_code}")
         sys.exit(1)
 
-@timer_decorator
 def get_stock_data_alpha_vantage(symbol: str) -> List[Dict[str, Any]]:
     """
     :param symbol: The company or index you would like to get information from AlphaAvantage API e.g. TSLA
