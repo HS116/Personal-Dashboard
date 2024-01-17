@@ -154,9 +154,7 @@ def stocks2(selected_country):
 
     return create_stocks_graph(selected_country)
 
-
-@app.callback(Output("country1-news", "children"), Input("select-country1-news", "value"))
-def render_news_country1(selected_country):
+def create_news_div(selected_country : str):
     engine: Engine = buildEngine()
 
     Session = sessionmaker(bind=engine.db_engine)
@@ -181,34 +179,20 @@ def render_news_country1(selected_country):
             )
 
         return content
+
+
+@app.callback(Output("country1-news", "children"), Input("select-country1-news", "value"))
+def render_news_country1(selected_country):
+    
+    return create_news_div(selected_country)
 
 
 @app.callback(Output("country2-news", "children"), Input("select-country2-news", "value"))
 def render_news_country2(selected_country):
-    engine: Engine = buildEngine()
+    
+    return create_news_div(selected_country)
 
-    Session = sessionmaker(bind=engine.db_engine)
-
-    with Session.begin() as session:
-        content = []
-
-        articles = session.query(NewsData).filter(NewsData.country == selected_country)
-        for article in articles:
-            content.append(
-                html.Div(
-                    [
-                        html.Div(
-                            [
-                                html.H3([article.title], style={"font-size": "20px"}),
-                                html.P([article.description]),
-                                html.P([article.url]),
-                            ]
-                        )
-                    ]
-                )
-            )
-
-        return content
+    
 
 
 if __name__ == "__main__":
