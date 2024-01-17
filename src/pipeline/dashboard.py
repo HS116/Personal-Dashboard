@@ -11,7 +11,7 @@ from engine import Engine
 from insert_data import NewsData, buildEngine
 from sqlalchemy.orm import sessionmaker
 
-app = Dash(external_stylesheets=[dbc.themes.SLATE], suppress_callback_exceptions=True)
+app = Dash(external_stylesheets=[dbc.themes.SLATE],                                                        suppress_callback_exceptions=True)
 
 app.layout = html.Div(
     [
