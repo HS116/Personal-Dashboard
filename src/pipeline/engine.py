@@ -2,7 +2,6 @@ from sqlalchemy import create_engine
 
 
 class Engine:
-
     def __init__(self, user: str, password: str, host: str, port: int, db_type: str, db_name: str):
         self.user = user
         self.password = password
