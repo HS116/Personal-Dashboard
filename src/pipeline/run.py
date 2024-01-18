@@ -20,6 +20,9 @@ from load_data import StockData, NewsData, WeatherData, ExchangeRateData
 
 import json
 
+import time
+
+time.sleep(10)
 
 engine: Engine = buildEngine()
 create_tables(engine)
@@ -34,13 +37,12 @@ for country, stocks in my_stocks["stocks"].items():
         insert_stock_data(engine, get_stock_data_market_stack(stock["symbol"]))
         
 
-# insert_stock_data(engine, get_fake_stock_data())
-# insert_news_articles(engine, get_newsdataio_news("de"))
-# insert_news_articles(engine, get_newsdataio_news("gb"))
-# insert_news_articles(engine, get_newsdataio_news("us"))
-# insert_news_articles(engine, get_newsdataio_news("in"))
-# insert_exchange_rates(engine, get_exchange_rates(["USD", "EUR", "GBP", "INR"]))
-# insert_weather_data(engine, get_weather_data("Munich"))
+insert_news_articles(engine, get_newsdataio_news("de"))
+insert_news_articles(engine, get_newsdataio_news("gb"))
+insert_news_articles(engine, get_newsdataio_news("us"))
+insert_news_articles(engine, get_newsdataio_news("in"))
+insert_exchange_rates(engine, get_exchange_rates(["USD", "EUR", "GBP", "INR"]))
+insert_weather_data(engine, get_weather_data("Munich"))
 
 Session = sessionmaker(bind=engine.db_engine)
 
@@ -50,20 +52,20 @@ with Session.begin() as session:
         print(row)
         print("\n")
 
-    # rows = session.query(NewsData).all()
-    # for row in rows:
-    #     print(row)
-    #     print("\n")
+    rows = session.query(NewsData).all()
+    for row in rows:
+        print(row)
+        print("\n")
 
-    # rows = session.query(ExchangeRateData).all()
-    # for row in rows:
-    #     print(row)
-    #     print("\n")
+    rows = session.query(ExchangeRateData).all()
+    for row in rows:
+        print(row)
+        print("\n")
 
-    # rows = session.query(WeatherData).all()
-    # for row in rows:
-    #     print(row)
-    #     print("\n")
+    rows = session.query(WeatherData).all()
+    for row in rows:
+        print(row)
+        print("\n")
 
 """
 # Read
