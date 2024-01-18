@@ -1,1 +1,1 @@
-48 22 * * 1-5 python /run.py
+00 23 * * 1-5 bash -c "make run"
