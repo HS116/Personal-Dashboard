@@ -73,38 +73,3 @@ with Session.begin() as session:
     for row in rows:
         print(row)
         print("\n")
-
-"""
-# Read
-rows = session.query(Test).all()
-print("Read:")
-for row in rows:
-    print(row.id, row.name)
-
-# Update
-update_entry = session.query(Test).filter_by(name="John Doe").first()
-if update_entry:
-    update_entry.name = "Jane Smith"
-    session.commit()
-    print("Update: Entry updated successfully.")
-
-# Read after update
-rows = session.query(Test).all()
-print("Read after update:")
-for row in rows:
-    print(row.id, row.name)
-
-# Delete
-delete_entry = session.query(Test).filter_by(name="Jane Smith").first()
-if delete_entry:
-    session.delete(delete_entry)
-    session.commit()
-    print("Delete: Entry deleted successfully.")
-
-# Read after delete
-rows = session.query(Test).all()
-print("Read after delete:")
-for row in rows:
-    print(row.id, row.name)
-
-"""
