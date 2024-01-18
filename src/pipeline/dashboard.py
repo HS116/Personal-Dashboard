@@ -60,7 +60,7 @@ def create_country_dropdowns(info_type: str) -> html.Div:
             html.Div(
                 [
                     dbc.Card(
-                        "Something",
+                        "Loading...",
                         id=f"country1-{info_type.lower()}",
                         color="secondary",
                         inverse=True,
@@ -73,7 +73,7 @@ def create_country_dropdowns(info_type: str) -> html.Div:
                         },
                     ),
                     dbc.Card(
-                        "Something",
+                        "Loading...",
                         id=f"country2-{info_type.lower()}",
                         color="secondary",
                         inverse=True,
@@ -105,7 +105,7 @@ def render_content(tab):
         return html.Div(
             [
                 html.H3("Weather", style={'text-align': 'center'}),
-                dbc.Card("Something", color="secondary", inverse=True, style={'height': '100vh', 'padding': '20px'}),
+                dbc.Card("TODO", color="secondary", inverse=True, style={'height': '100vh', 'padding': '20px'}),
             ],
             style={'padding': '20px'},
         )
@@ -114,7 +114,7 @@ def render_content(tab):
         return html.Div(
             [
                 html.H3("Exchange Rates", style={'text-align': 'center'}),
-                dbc.Card("Something", color="secondary", inverse=True, style={'height': '100vh', 'padding': '20px'}),
+                dbc.Card("TODO", color="secondary", inverse=True, style={'height': '100vh', 'padding': '20px'}),
             ],
             style={'padding': '20px'},
         )
