@@ -22,9 +22,8 @@ Base = declarative_base()
 @dataclass
 class StockData(Base):
     __tablename__ = "StockData"
-    id: int = Column(Integer, primary_key=True, autoincrement=True)
-    symbol: str = Column(String)
-    datetime: datetime = Column(DateTime)
+    symbol: str = Column(String, primary_key=True)
+    datetime: datetime = Column(DateTime, primary_key=True)
     open: float = Column(Float)
     high: float = Column(Float)
     low: float = Column(Float)
@@ -48,25 +47,23 @@ class NewsData(Base):
 @dataclass
 class ExchangeRateData(Base):
     __tablename__ = "ExchangeRateData"
-    id: int = Column(Integer, primary_key=True, autoincrement=True)
-    first_currency: str = Column(String)
-    second_currency: str = Column(String)
+    first_currency: str = Column(String, primary_key=True)
+    second_currency: str = Column(String, primary_key=True)
+    datetime: datetime = Column(DateTime, primary_key=True)
     exchange_rate: float = Column(Float)
-    datetime: datetime = Column(DateTime)
 
 
 @dataclass
 class WeatherData(Base):
     __tablename__ = "WeatherData"
-    id: int = Column(Integer, primary_key=True, autoincrement=True)
-    city: str = Column(String)
-    country: str = Column(String)
+    city: str = Column(String, primary_key=True)
+    country: str = Column(String, primary_key=True)
+    datetime: datetime = Column(DateTime, primary_key=True)
     condition: str = Column(String)
     temp_celsius: float = Column(Float)
     temp_feels_like_celsius: float = Column(Float)
     wind_kph: float = Column(Float)
     humidity: float = Column(Float)
-    datetime: datetime = Column(DateTime)
 
 
 def buildEngine() -> Engine:
@@ -98,19 +95,22 @@ def insert_stock_data(engine: Engine, stock_data: List[Dict[str, Any]]):
     # Using a context manager to automatically take care of begin(), commit(), and rollback()
     with Session.begin() as session:
         for stock_data_point in stock_data:
-            # TODO: Query the data to be avoid adding a duplicate
 
-            session.add(
-                StockData(
-                    symbol=stock_data_point["symbol"],
-                    datetime=stock_data_point["datetime"],
-                    open=stock_data_point["open"],
-                    high=stock_data_point["high"],
-                    low=stock_data_point["close"],
-                    close=stock_data_point["low"],
-                    volume=stock_data_point["volume"],
+            # Query the data to be avoid adding a duplicate
+            existing_obj = session.query(StockData).filter_by(symbol=stock_data_point["symbol"], datetime=stock_data_point["datetime"]).first()
+
+            if not existing_obj:
+                session.add(
+                    StockData(
+                        symbol=stock_data_point["symbol"],
+                        datetime=stock_data_point["datetime"],
+                        open=stock_data_point["open"],
+                        high=stock_data_point["high"],
+                        low=stock_data_point["close"],
+                        close=stock_data_point["low"],
+                        volume=stock_data_point["volume"],
+                    )
                 )
-            )
 
 
 def insert_news_articles(engine: Engine, news_data: List[Dict[str, Any]]):
@@ -120,7 +120,6 @@ def insert_news_articles(engine: Engine, news_data: List[Dict[str, Any]]):
 
     with Session.begin() as session:
         for news_article in news_data:
-            # TODO: Query the data to be avoid adding a duplicate
 
             session.add(
                 NewsData(
@@ -140,36 +139,40 @@ def insert_exchange_rates(engine: Engine, exchange_rates: List[Dict[str, Any]]):
 
     with Session.begin() as session:
         for exchange_rate in exchange_rates:
-            # TODO: Query the data to be avoid adding a duplicate
+            # Query the data to be avoid adding a duplicate
+            existing_obj = session.query(ExchangeRateData).filter_by(first_currency=exchange_rate["first_currency"], second_currency=exchange_rate["second_currency"], datetime=exchange_rate["datetime"]).first()
 
-            session.add(
-                ExchangeRateData(
-                    first_currency=exchange_rate["first_currency"],
-                    second_currency=exchange_rate["second_currency"],
-                    exchange_rate=exchange_rate["exchange_rate"],
-                    datetime=exchange_rate["datetime"],
+            if not existing_obj:
+                session.add(
+                    ExchangeRateData(
+                        first_currency=exchange_rate["first_currency"],
+                        second_currency=exchange_rate["second_currency"],
+                        exchange_rate=exchange_rate["exchange_rate"],
+                        datetime=exchange_rate["datetime"],
+                    )
                 )
-            )
 
 
 def insert_weather_data(engine: Engine, weather_data: Dict[str, Any]):
     Session = sessionmaker(bind=engine.db_engine)
 
     with Session.begin() as session:
-        # TODO: Query the data to be avoid adding a duplicate
+        # Query the data to be avoid adding a duplicate
+        existing_obj = session.query(WeatherData).filter_by(city=weather_data["city"], country=weather_data["country"], datetime=weather_data["datetime"]).first()
 
-        session.add(
-            WeatherData(
-                city=weather_data["city"],
-                country=weather_data["country"],
-                condition=weather_data["condition"],
-                temp_celsius=weather_data["temp_celsius"],
-                temp_feels_like_celsius=weather_data["temp_feels_like_celsius"],
-                wind_kph=weather_data["wind_kph"],
-                humidity=weather_data["humidity"],
-                datetime=weather_data["datetime"],
+        if not existing_obj:
+            session.add(
+                WeatherData(
+                    city=weather_data["city"],
+                    country=weather_data["country"],
+                    condition=weather_data["condition"],
+                    temp_celsius=weather_data["temp_celsius"],
+                    temp_feels_like_celsius=weather_data["temp_feels_like_celsius"],
+                    wind_kph=weather_data["wind_kph"],
+                    humidity=weather_data["humidity"],
+                    datetime=weather_data["datetime"],
+                )
             )
-        )
 
 
 if __name__ == "__main__":
