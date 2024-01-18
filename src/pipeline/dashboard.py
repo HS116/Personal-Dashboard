@@ -1,3 +1,4 @@
+import json
 from typing import List
 
 import dash_bootstrap_components as dbc
@@ -10,7 +11,6 @@ from dash import Dash, Input, Output, dcc, html
 from engine import Engine
 from load_data import NewsData, buildEngine
 from sqlalchemy.orm import sessionmaker
-import json
 
 app = Dash(external_stylesheets=[dbc.themes.SLATE], suppress_callback_exceptions=True)
 
@@ -120,8 +120,7 @@ def render_content(tab):
         )
 
 
-def create_stocks_graph(selected_country : str):
-
+def create_stocks_graph(selected_country: str):
     with open('configs/my_stocks.json', 'r') as file:
         my_stocks = json.load(file)
 
@@ -145,16 +144,15 @@ def create_stocks_graph(selected_country : str):
 
 @app.callback(Output("country1-stocks", "children"), Input("select-country1-stocks", "value"))
 def stocks1(selected_country):
-
     return create_stocks_graph(selected_country)
 
 
 @app.callback(Output("country2-stocks", "children"), Input("select-country2-stocks", "value"))
 def stocks2(selected_country):
-
     return create_stocks_graph(selected_country)
 
-def create_news_div(selected_country : str):
+
+def create_news_div(selected_country: str):
     engine: Engine = buildEngine()
 
     Session = sessionmaker(bind=engine.db_engine)
@@ -183,16 +181,12 @@ def create_news_div(selected_country : str):
 
 @app.callback(Output("country1-news", "children"), Input("select-country1-news", "value"))
 def render_news_country1(selected_country):
-    
     return create_news_div(selected_country)
 
 
 @app.callback(Output("country2-news", "children"), Input("select-country2-news", "value"))
 def render_news_country2(selected_country):
-    
     return create_news_div(selected_country)
-
-    
 
 
 if __name__ == "__main__":

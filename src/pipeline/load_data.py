@@ -95,9 +95,12 @@ def insert_stock_data(engine: Engine, stock_data: List[Dict[str, Any]]):
     # Using a context manager to automatically take care of begin(), commit(), and rollback()
     with Session.begin() as session:
         for stock_data_point in stock_data:
-
             # Query the data to be avoid adding a duplicate
-            existing_obj = session.query(StockData).filter_by(symbol=stock_data_point["symbol"], datetime=stock_data_point["datetime"]).first()
+            existing_obj = (
+                session.query(StockData)
+                .filter_by(symbol=stock_data_point["symbol"], datetime=stock_data_point["datetime"])
+                .first()
+            )
 
             if not existing_obj:
                 session.add(
@@ -120,7 +123,6 @@ def insert_news_articles(engine: Engine, news_data: List[Dict[str, Any]]):
 
     with Session.begin() as session:
         for news_article in news_data:
-
             session.add(
                 NewsData(
                     title=news_article["title"],
@@ -140,7 +142,15 @@ def insert_exchange_rates(engine: Engine, exchange_rates: List[Dict[str, Any]]):
     with Session.begin() as session:
         for exchange_rate in exchange_rates:
             # Query the data to be avoid adding a duplicate
-            existing_obj = session.query(ExchangeRateData).filter_by(first_currency=exchange_rate["first_currency"], second_currency=exchange_rate["second_currency"], datetime=exchange_rate["datetime"]).first()
+            existing_obj = (
+                session.query(ExchangeRateData)
+                .filter_by(
+                    first_currency=exchange_rate["first_currency"],
+                    second_currency=exchange_rate["second_currency"],
+                    datetime=exchange_rate["datetime"],
+                )
+                .first()
+            )
 
             if not existing_obj:
                 session.add(
@@ -158,7 +168,11 @@ def insert_weather_data(engine: Engine, weather_data: Dict[str, Any]):
 
     with Session.begin() as session:
         # Query the data to be avoid adding a duplicate
-        existing_obj = session.query(WeatherData).filter_by(city=weather_data["city"], country=weather_data["country"], datetime=weather_data["datetime"]).first()
+        existing_obj = (
+            session.query(WeatherData)
+            .filter_by(city=weather_data["city"], country=weather_data["country"], datetime=weather_data["datetime"])
+            .first()
+        )
 
         if not existing_obj:
             session.add(

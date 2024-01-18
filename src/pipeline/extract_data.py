@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Optional
 import requests
 from newsapi import NewsApiClient
 
+
 def get_stock_data_market_stack(symbol: str = "AAPL") -> List[Dict[str, Any]]:
     """
     :param symbol: The company or index you would like to get information from AlphaAvantage API e.g. TSLA
@@ -67,6 +68,7 @@ def get_stock_data_market_stack(symbol: str = "AAPL") -> List[Dict[str, Any]]:
     else:
         logging.error(f"Response had the following status code: {response.status_code}")
         sys.exit(1)
+
 
 def get_stock_data_alpha_vantage(symbol: str) -> List[Dict[str, Any]]:
     """
@@ -132,6 +134,7 @@ def get_stock_data_alpha_vantage(symbol: str) -> List[Dict[str, Any]]:
         logging.error(f"Response had the following status code: {response.status_code}")
         sys.exit(1)
 
+
 def get_fake_stock_data():
     """
     For testing purposes to prevent unnecessary API requests since there is a limit of 25 API requests per day
@@ -189,6 +192,7 @@ def get_fake_stock_data():
 
     return res
 
+
 def get_newsapi_news(country: str = "us", category: str = "general") -> List[Dict[str, Any]]:
     """
     :param country: The country you would like to receive news information about. Default is US. India and US seem to get good data, but hardly any data for Germany and not so good data for uk.
@@ -239,6 +243,7 @@ def get_newsapi_news(country: str = "us", category: str = "general") -> List[Dic
     else:
         logging.error("Could not retrieve news information successfully")
         sys.exit(1)
+
 
 def get_newsdataio_news(country: str = "de", category: str = "top") -> List[Dict[str, Any]]:
     """
@@ -301,6 +306,7 @@ def get_newsdataio_news(country: str = "de", category: str = "top") -> List[Dict
         logging.error(f"Response for {country} had the following status code: {response.status_code}")
         sys.exit(1)
 
+
 def get_crypto_exchange_data() -> List[Dict[str, Any]]:
     """
     :return: List of dictionaries containing crypto exchange data
@@ -313,6 +319,7 @@ def get_crypto_exchange_data() -> List[Dict[str, Any]]:
         logging.error(f"There was an error with the request, {ce}")
         sys.exit(1)
     return response.json().get('data', [])
+
 
 def get_exchange_rates(currencies: List[str] = ["USD", "EUR", "GBP", "INR"]) -> List[Dict[str, Any]]:
     """
@@ -364,6 +371,7 @@ def get_exchange_rates(currencies: List[str] = ["USD", "EUR", "GBP", "INR"]) -> 
             sys.exit(1)
 
     return exchange_rates
+
 
 def get_weather_data(city: str = "Munich") -> Dict[str, Any]:
     """
