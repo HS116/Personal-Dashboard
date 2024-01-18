@@ -5,9 +5,9 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=personal_dashboard
+      - POSTGRES_DB=personal_dashboard 
     volumes:
-      - "/home/neil/Personal-Dashboard/postgres_data:/var/lib/postgresql/data:rw"      
+      - "/home/neil/Personal-Dashboard/postgres_data:/var/lib/postgresql/data:rw"           
     ports:
       - "5432:5432"
     healthcheck:
@@ -21,13 +21,13 @@ services:
       - PGADMIN_DEFAULT_EMAIL=admin@admin.com
       - PGADMIN_DEFAULT_PASSWORD=postgres
     volumes:
-      - /home/neil/Personal-Dashboard/data_pgadmin:/var/lib/pgadmin      
+      - /home/neil/Personal-Dashboard/data_pgadmin:/var/lib/pgadmin         
     ports:
       - "8080:80"
   pythonapp:
     container_name: pythonapp
     build: ./
-    command: python3 ./src/pipeline/run.py
+    command: bash -c "python3 ./src/pipeline/run.py && tail -f /dev/null"
     depends_on:
       pgdatabase:
         condition: service_healthy
