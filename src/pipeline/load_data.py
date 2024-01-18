@@ -193,27 +193,7 @@ if __name__ == "__main__":
     engine: Engine = buildEngine()
     create_tables(engine)
 
-    # REMEM to mock the scraped data for the stocks when just testing the db, since we have a limit of 25 api requests per day
     insert_stock_data(engine, get_stock_data_market_stack("TCS.XNSE"))
-
-    """
-    Stocks I am interested in from US, Germany, and UK:
-    Allianz on german stock exchange: ALV.XFRA
-    BMW on german stock exchange: BMW.XFRA
-    Mercedes Benz group on german stock exchange: DAII.XFRA
-
-    Apple on Nasdaq: AAPL
-    Tesla on Nasdaq: TSLA
-    Coca-Cola on Nasdaq: KO
-
-    Tesco on London Stock Exchange: TSCO.XLON
-    Shell on London Stock Exchange: SHEL.XLON	
-    HSBC on London Stock Exchange: HSBA.XLON
-
-    Reliance Industries on National Stock Exhange India: RELIANCE.XNSE	
-    Infosys on National Stock Exchange India: INFY.XNSE
-    Tata Consultancy Services on National Stock Exchange India: TCS.XNSE
-    """
 
     # insert_stock_data(engine, get_fake_stock_data())
     # insert_news_articles(engine, get_newsdataio_news("de"))
@@ -246,37 +226,3 @@ if __name__ == "__main__":
         #     print(row)
         #     print("\n")
 
-    """
-    # Read
-    rows = session.query(Test).all()
-    print("Read:")
-    for row in rows:
-        print(row.id, row.name)
-
-    # Update
-    update_entry = session.query(Test).filter_by(name="John Doe").first()
-    if update_entry:
-        update_entry.name = "Jane Smith"
-        session.commit()
-        print("Update: Entry updated successfully.")
-
-    # Read after update
-    rows = session.query(Test).all()
-    print("Read after update:")
-    for row in rows:
-        print(row.id, row.name)
-
-    # Delete
-    delete_entry = session.query(Test).filter_by(name="Jane Smith").first()
-    if delete_entry:
-        session.delete(delete_entry)
-        session.commit()
-        print("Delete: Entry deleted successfully.")
-
-    # Read after delete
-    rows = session.query(Test).all()
-    print("Read after delete:")
-    for row in rows:
-        print(row.id, row.name)
-
-    """

@@ -24,7 +24,6 @@ def get_stock_data_market_stack(symbol: str = "AAPL") -> List[Dict[str, Any]]:
 
     api_key = config.get("api_keys", "Marketstack_api_key")
 
-    # TODO: change "eod" to "eod/latest" so we can inserting duplicate data later
     url = f"http://api.marketstack.com/v1/eod?access_key={api_key}&symbols={symbol}"
 
     try:
@@ -139,8 +138,6 @@ def get_fake_stock_data():
     """
     For testing purposes to prevent unnecessary API requests since there is a limit of 25 API requests per day
     """
-
-    # TODO: Make this method better by using mocking or storing the data in a file
 
     res = [
         {
